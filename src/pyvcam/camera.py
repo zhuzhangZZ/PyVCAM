@@ -821,6 +821,13 @@ class Camera:
         # camera that does not support this setting.
         return self.get_param(const.PARAM_ADC_OFFSET)
 
+    @adc_offset.setter
+    def adc_offset(self, value):
+        "set the offset of ADC"
+
+        return self.set_param(const.PARAM_ADC_OFFSET, int(value))
+
+
     @property
     def gain(self):
         return self.get_param(const.PARAM_GAIN_INDEX)
@@ -1116,3 +1123,16 @@ class Camera:
     @meta_data_enabled.setter
     def meta_data_enabled(self, value):
         self.set_param(const.PARAM_METADATA_ENABLED, value)
+    
+    @property
+    def fan_speed(self):
+        return self.get_param(const.PARAM_FAN_SPEED_SETPOINT)
+
+    @fan_speed.setter
+    def fan_speed(self, value):
+        min_speed = self.get_param(const.PARAM_FAN_SPEED_SETPOINT, const.ATTR_MIN)
+        max_speed= self.get_param(const.PARAM_FAN_SPEED_SETPOINT, const.ATTR_MAX)
+        if not (min_speed <= value <= max_speed):
+            raise ValueError("Invalid value: {} - {} only supports gain "
+                             "indicies from {} - {}.".format(value, self, min_speed, max_speed))
+        self.set_param(const.PARAM_FAN_SPEED_SETPOINT, value)
